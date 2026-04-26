@@ -130,5 +130,4 @@ See `REVIEW.md` for a full implementation assessment and priority list for next 
 - `docs/architecture/decision-log.md`
 - `REVIEW.md` — critical implementation assessment
 - `HOSTING.md` — local dev, Docker, App Service deployment
-- `SETUP.md` — developer environment setup
 - `USAGE.md` — API and UI usage guide

@@ -2,7 +2,7 @@
   "rules": [
     {
       "field": "placeholder_parameter_1",
-      "condition": "PLACEHOLDER: Replace with physical plausibility condition (Pekka session required)",
+      "condition": "PLACEHOLDER: Replace with physical plausibility condition (physicist session required)",
       "severity": "warning",
       "message": "PLACEHOLDER: Replace with human-readable validation message"
     }

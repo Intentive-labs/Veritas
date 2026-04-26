@@ -12,9 +12,9 @@ public class ExperimentRecord
     public required DateTime SubmittedAt { get; init; }
     public required string SubmittedBy { get; init; }
 
-    // [MOCK] Parameter schema validated against lenr-experiment-schema.skill (requires Pekka session)
+    // [MOCK] Parameter schema validated against lenr-experiment-schema.skill (requires physicist session)
     // Replace Dictionary<string,object> with a strongly-typed experiment parameter model
-    // once the LENR experiment schema is authored by Pekka.
+    // once the LENR experiment schema is authored by physicist.
     public Dictionary<string, object> Parameters { get; init; } = new();
     public string? Notes { get; set; }
 

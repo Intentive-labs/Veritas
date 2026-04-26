@@ -1,7 +1,7 @@
 # Sample Experiment Paper
 
 > [MOCK] This is a synthetic scientific paper for testing document ingestion.
-> Replace with real documents from the Cill AB corpus.
+> Replace with real documents from the customer corpus.
 
 **Title:** Anomalous Heat Production in Nickel-Hydrogen Systems Under Variable Magnetic Field Conditions
 
@@ -38,8 +38,8 @@ This study investigates the relationship between PLACEHOLDER_PARAMETER and the o
 
 **Discussion:**
 
-PLACEHOLDER: Fill with actual discussion after Pekka session.
+PLACEHOLDER: Fill with actual discussion after physicist session.
 
 **Conclusion:**
 
-Results are inconclusive pending Pekka ontology review.
+Results are inconclusive pending physicist ontology review.

@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using System.Text.Json;
+using Microsoft.Extensions.Logging;
 using Veritas.Core.Contracts;
 using Veritas.Core.Models;
 using Veritas.Storage;
@@ -9,11 +10,9 @@ namespace Veritas.Corpora;
 // [MOCK] Document records are stored in-memory.
 // Replace with persistent IDocumentRepository backed by Azure Cosmos DB.
 // Binary files go to DataLakeDocumentStore (swap to real Azure Data Lake in production).
-public class DocumentIngestionService
+public class DocumentIngestionService(IDocumentStore store, ILogger<DocumentIngestionService> logger)
 {
-    private readonly IDocumentStore _store;
-
-    // [MOCK] In-memory document records — replace with injected IDocumentRepository.
+    private readonly IDocumentStore _store = store;    // [MOCK] In-memory document records — replace with injected IDocumentRepository.
     private readonly Dictionary<string, VeritasDocument> _documents = new();
 
     // [MOCK] Idempotency index: corpusId → (sha256 → documentId).
@@ -24,8 +23,6 @@ public class DocumentIngestionService
 
     private static readonly HashSet<string> SupportedFormats =
         new(StringComparer.OrdinalIgnoreCase) { ".pdf", ".docx", ".md", ".txt", ".html" };
-
-    public DocumentIngestionService(IDocumentStore store) => _store = store;
 
     public static bool IsFormatSupported(string filename)
         => SupportedFormats.Contains(Path.GetExtension(filename));
@@ -63,11 +60,15 @@ public class DocumentIngestionService
             _hashIndex[corpusId] = hashMap = new();
 
         if (hashMap.TryGetValue(hash, out var existingId))
+        {
+            logger.LogInformation("Document duplicate detected: corpus={CorpusId} sha256={Hash} → existing {DocumentId}", corpusId, hash[..12], existingId);
             return (_documents[existingId], true);
+        }
 
         var documentId = Guid.NewGuid().ToString();
         var rawPath = StoragePaths.RawDocument(corpusId, documentId, ext.TrimStart('.'));
         await _store.WriteAsync(rawPath, new MemoryStream(bytes), ct);
+        logger.LogInformation("Document stored: corpus={CorpusId} document={DocumentId} zone=raw path={Path} bytes={Bytes}", corpusId, documentId, rawPath, bytes.Length);
 
         var doc = new VeritasDocument
         {
@@ -97,6 +98,7 @@ public class DocumentIngestionService
 
         _documents[documentId] = doc;
         hashMap[hash] = documentId;
+        logger.LogInformation("Document ingested: corpus={CorpusId} document={DocumentId} rights={Rights}", corpusId, documentId, rightsDeclaration);
         return (doc, false);
     }
 

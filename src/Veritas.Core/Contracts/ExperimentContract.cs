@@ -5,7 +5,7 @@ public record CreateExperimentRequest(
     string PackVersion,
     string HypothesisVersion,
     // [MOCK] Dictionary used as placeholder. Replace with a typed model once
-    // lenr-experiment-schema.skill is authored by Pekka (cill-ab/lenr-pack Phase 2).
+    // lenr-experiment-schema.skill is authored by physicist (customer/lenr-pack Phase 2).
     Dictionary<string, object> Parameters,
     string? Notes
 );

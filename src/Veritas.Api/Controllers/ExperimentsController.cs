@@ -30,7 +30,7 @@ public class ExperimentsController : ControllerBase
         string corpusId, [FromBody] CreateExperimentRequest request)
     {
         // [MOCK] Validate request.Parameters against lenr-experiment-schema.skill
-        // once that schema is authored by Pekka (FR-3.1, requires Pekka session).
+        // once that schema is authored by physicist (FR-3.1, requires physicist session).
         if (string.IsNullOrWhiteSpace(request.PackId))
             return BadRequest("pack_id is required");
         if (string.IsNullOrWhiteSpace(request.HypothesisVersion))

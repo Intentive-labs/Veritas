@@ -1,0 +1,118 @@
+# RAG Plugin Contract
+
+## IRagPlugin
+
+The single entry point for all RAG queries:
+
+```csharp
+public interface IRagPlugin
+{
+    Task<RagResponse> QueryAsync(RagRequest request, CancellationToken ct = default);
+}
+```
+
+Every implementation MUST be registered against exactly one corpus.
+
+## RagRequest
+
+```json
+{
+  "query":    "string — natural language question",
+  "corpusId": "string — must match the connector's registered corpus",
+  "filters":  { "key": "value" },
+  "topK":     10
+}
+```
+
+## RagResponse
+
+```json
+{
+  "answer":        "string — grounded answer or empty if refused",
+  "confidence":    "high | medium | low",
+  "sources": [
+    { "document_id": "string", "title": "string", "chunk_id": "string", "excerpt": "string" }
+  ],
+  "disclaimer":    "string — always present, corpus + pack scoped",
+  "is_refused":    false,
+  "refusal_reason": null
+}
+```
+
+## Pipeline: RagPipeline (implements IRagPlugin)
+
+```
+QueryAsync(request)
+  │
+  ├── ICorpusConnector.IsAvailableAsync()   ← abort if unavailable
+  ├── IRetriever.RetrieveAsync()            ← fetch top-K chunks scoped to corpus
+  │     └── returns [] if no results       ← refuse: "No relevant documents found"
+  ├── IAnswerGenerator.GenerateAsync()      ← grounded generation (Azure OpenAI)
+  │     └── IsRefused = true if low evidence
+  └── ICitationValidator.Validate()         ← verify citations appear in retrieved chunks
+```
+
+## Corpus Scoping (FR-1.30)
+
+- `request.CorpusId` MUST equal `ICorpusConnector.CorpusId`
+- Mismatch throws `InvalidOperationException` — never silently cross corpus boundaries
+- Filters always include `corpus_id` as a hard filter on the index
+
+## Refusal Rules (FR-1.31)
+
+Pipeline refuses (returns `is_refused: true`) when:
+1. Corpus is unavailable
+2. Retrieval returns 0 chunks
+3. `IAnswerGenerator` cannot ground the answer in retrieved text
+4. `ICitationValidator` finds citations not present in retrieved chunks
+
+On refusal: `answer = ""`, `sources = []`, `refusal_reason` explains why.
+
+## Disclaimer
+
+Every response includes a disclaimer. The disclaimer is corpus + pack scoped:
+
+```
+"All findings are correlational only. Results are specific to corpus [{corpus_id}]
+and pack [{pack_id}] v[{pack_version}] and its stated assumptions."
+```
+
+## ICorpusConnector
+
+```csharp
+public interface ICorpusConnector
+{
+    string       CorpusId { get; }
+    CorpusConfig Config   { get; }
+    Task<bool>   IsAvailableAsync(CancellationToken ct = default);
+}
+```
+
+Domain-specific connectors (e.g. `LenrCorpusConnector`) extend this to add
+domain-aware search filters and corpus-level metadata.
+
+## IIndexBackend
+
+```csharp
+public interface IIndexBackend
+{
+    Task IndexChunksAsync(IEnumerable<DocumentChunk> chunks, CancellationToken ct = default);
+    Task<IReadOnlyList<RetrievedChunk>> SearchAsync(
+        string query, string corpusId, int topK,
+        Dictionary<string,string>? filters, CancellationToken ct = default);
+    Task DeleteDocumentChunksAsync(string documentId, string corpusId, CancellationToken ct = default);
+}
+```
+
+## BLOCKED — AzureSearchIndexBackend
+
+`MockIndexBackend` is the current implementation.
+`AzureSearchIndexBackend` is blocked on the search expert session:
+
+- Chunking strategy (sliding window vs semantic)
+- Chunk size and overlap
+- Embedding model and dimensions
+- Scoring profiles (keyword + vector hybrid)
+- Index field schema
+
+See `FRD FR-1.22–1.26`.

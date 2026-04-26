@@ -1,10 +1,10 @@
 # LENR Example Pack — Generic Placeholder
 
-> ⚠️ **This is a placeholder only.** All values are synthetic and must be replaced after the Pekka ontology session.
+> ⚠️ **This is a placeholder only.** All values are synthetic and must be replaced after the physicist ontology session.
 
 This example pack lives in `intentive-labs/veritas` as a structural reference for how a LENR domain pack should look.
 
-## What needs to be filled in (requires Pekka session)
+## What needs to be filled in (requires physicist session)
 
 | File | What is missing |
 |------|----------------|
@@ -17,7 +17,7 @@ This example pack lives in `intentive-labs/veritas` as a structural reference fo
 
 ## Real pack location
 
-The real Cill AB pack lives in `cill-ab/lenr-pack` (private repo) and is Cill AB IP.
+The real customer pack lives in `customer/lenr-pack` (private repo) and is customer IP.
 
 ## Schema reference
 

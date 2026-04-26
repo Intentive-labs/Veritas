@@ -2,11 +2,11 @@
   "outcome_classes": [
     {
       "name": "placeholder_positive",
-      "description": "PLACEHOLDER: Replace with actual positive outcome definition (Pekka session required)"
+      "description": "PLACEHOLDER: Replace with actual positive outcome definition (physicist session required)"
     },
     {
       "name": "placeholder_negative",
-      "description": "PLACEHOLDER: Replace with actual negative outcome definition (Pekka session required)"
+      "description": "PLACEHOLDER: Replace with actual negative outcome definition (physicist session required)"
     },
     {
       "name": "inconclusive",
@@ -16,7 +16,7 @@
   "rules": [
     {
       "field": "placeholder_parameter_1",
-      "condition": "PLACEHOLDER: Replace with actual threshold condition (Pekka session required)",
+      "condition": "PLACEHOLDER: Replace with actual threshold condition (physicist session required)",
       "outcome": "placeholder_positive",
       "confidence_threshold": 0.7
     }

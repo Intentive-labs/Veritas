@@ -6,11 +6,11 @@
   "owner": "intentive-labs",
   "status": "experimental",
   "assumptions": [
-    "PLACEHOLDER: Replace with actual physical assumptions after Pekka ontology session",
+    "PLACEHOLDER: Replace with actual physical assumptions after physicist ontology session",
     "PLACEHOLDER: e.g. which physical variable is treated as the controlling variable"
   ],
   "ignores": [
-    "PLACEHOLDER: Replace with factors explicitly outside pack scope after Pekka session",
+    "PLACEHOLDER: Replace with factors explicitly outside pack scope after physicist session",
     "PLACEHOLDER: e.g. which variables are not tracked by this pack"
   ],
   "source": "PLACEHOLDER: Add citation or reference for pack rationale",

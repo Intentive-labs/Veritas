@@ -2,8 +2,6 @@
 ## Veritas
 **Version:** 1.4  
 **Date:** April 2026  
-**Owner:** Intentive Labs AB  
-**Customer:** Cill AB  
 **Status:** Draft – Copilot Agent Mode Ready
 
 ---
@@ -26,13 +24,13 @@ The platform separates four concerns:
 2. **Veritas.Rag** — standalone hostable RAG service, corpus-scoped queries (field-agnostic)
 3. **Veritas.Corpora** — corpus CRUD, document upload, rights declaration, indexing pipeline
 4. **Veritas.DomainPacks** — domain pack runtime and schema (field-agnostic)
-5. **DomainPacks.LenrMagneticField** — first domain pack implementation (Cill AB, private)
+5. **DomainPacks.LenrMagneticField** — first domain pack implementation (customer, private)
 
 **There is no default corpus and no bundled data.** The open source repo contains code, schemas, interfaces, sample documents, and mock corpora only.
 
-### 1.3 First Implementation: Cill AB / LENR
+### 1.3 First Implementation: customer / LENR
 
-Cill AB holds a patent describing magnetic field configuration as the controlling variable for LENR reproducibility, currently under peer review in JCMNS. Cill AB will:
+customer holds a patent describing magnetic field configuration as the controlling variable for LENR reproducibility, currently under peer review in JCMNS. customer will:
 
 1. Upload their own curated collection of LENR publications to a private corpus
 2. Apply the `DomainPacks.LenrMagneticField` pack for parameter extraction and hypothesis testing
@@ -51,16 +49,16 @@ A crawler connector may be added in a future phase as an optional ingestion sour
 | Core engine | `intentive-labs/veritas` | MIT | Code, schemas, interfaces, mocks |
 | Veritas RAG | `intentive-labs/veritas-rag` | MIT | Code, schemas, interfaces, samples |
 | Domain Pack schema | `intentive-labs/veritas` | MIT | Schema, generic LENR example |
-| **Cill AB LENR pack** | `cill-ab/lenr-pack` | **Private** | Pekka's rules and thresholds |
+| **customer LENR pack** | `customer/lenr-pack` | **Private** | physicist's rules and thresholds |
 
-Repos contain no LENR fulltext, no Pekka's private material, no validated private data.
+Repos contain no LENR fulltext, no physicist's private material, no validated private data.
 
 ### 1.6 Users
 
 | User | Role | Primary Need |
 |------|------|--------------|
-| Pekka Peltola | Physicist, Cill AB | Upload papers, query corpus, log experiments |
-| Katarina Svedman | Intentive Labs | Manage infrastructure, maintain platform |
+| physicist | Physicist, customer | Upload papers, query corpus, log experiments |
+| Engineer | Intentive Labs | Manage infrastructure, maintain platform |
 | Research groups | External | Build private queryable knowledge bases |
 | Institutional hosts (e.g. KTH) | External | Host Veritas RAG for their own corpus |
 
@@ -202,10 +200,10 @@ Veritas RAG finds and answers. Domain packs interpret and classify. Zero domain 
 | Rights declaration logged | Every document has rights declaration | Phase 1 complete |
 | RAG corpus-scoped query | Answers grounded in corpus with citations | Phase 1 complete |
 | Domain Pack schema published | Open, documented, versioned | Phase 2 complete |
-| Cill AB pack v1.0 complete | All required fields authored by Pekka | Phase 2 complete |
-| Parameter extraction working | >80% of Cill AB documents ≥1 structured parameter | Phase 2 complete |
+| customer pack v1.0 complete | All required fields authored by physicist | Phase 2 complete |
+| Parameter extraction working | >80% of customer documents ≥1 structured parameter | Phase 2 complete |
 | Multi-pack comparison | ≥2 packs against same corpus | Phase 4 complete |
-| Experiment logging | Cill AB experiments fully logged | Phase 3 complete |
+| Experiment logging | customer experiments fully logged | Phase 3 complete |
 | KTH hosting conversation | Initiated | Phase 4 complete |
 
 ---
@@ -243,32 +241,32 @@ Veritas is built on **gh-maf-template**, Intentive Labs' engineering harness for
 
 ## 7. Skills Required
 
-| Skill | Location | Pekka Input |
+| Skill | Location | physicist Input |
 |-------|----------|------------|
 | `content-understanding-schema.skill` | Core | No |
 | `normalization-rules.skill` | Core | No |
 | `domain-pack-schema.skill` | Core | No |
 | `corpus-ingestion-rules.skill` | Core | No |
 | `rag-plugin-contract.skill` | veritas-rag | No |
-| `lenr-parameter-ontology.skill` | Cill AB pack | **YES** |
-| `lenr-outcome-classification.skill` | Cill AB pack | **YES** |
-| `lenr-validation-rules.skill` | Cill AB pack | **YES** |
-| `lenr-experiment-schema.skill` | Cill AB pack | **YES** |
+| `lenr-parameter-ontology.skill` | customer pack | **YES** |
+| `lenr-outcome-classification.skill` | customer pack | **YES** |
+| `lenr-validation-rules.skill` | customer pack | **YES** |
+| `lenr-experiment-schema.skill` | customer pack | **YES** |
 
 ---
 
 ## 8. Phased Delivery
 
 ### Phase 0 — Foundation (Week 1)
-Fork gh-maf-template. Define Domain Pack schema. Author core skills. Schedule Pekka session.
+Fork gh-maf-template. Define Domain Pack schema. Author core skills. Schedule physicist session.
 
 ### Phase 1 — Private Corpus Knowledge Engine (Weeks 2–5)
 Create corpus, upload documents, extract text, index, query with citations. No crawler. User-provided documents only.
 
 **Phase 1 exit criteria:** A private user-provided corpus can be created, populated, indexed, queried and reprocessed with full provenance.
 
-### Phase 2 — Extraction Pipeline + Cill AB Pack v1.0 (Weeks 5–9)
-MAF agent parameter extraction. Author Cill AB domain pack. Human validation. **Requires Pekka session.**
+### Phase 2 — Extraction Pipeline + customer Pack v1.0 (Weeks 5–9)
+MAF agent parameter extraction. Author customer domain pack. Human validation. **Requires physicist session.**
 
 ### Phase 3 — Experiment Log (Weeks 9–11)
 Structured experiment logging. Comparison against corpus.
@@ -296,11 +294,11 @@ A crawler connector may be added as an optional ingestion source. Not in core pl
 - Bicep infrastructure
 
 ### 9.2 What Copilot does NOT decide
-- Domain Pack schema — Katarina
-- Cill AB pack content — Pekka + Katarina
-- RAG plugin contract — Katarina + search expert
+- Domain Pack schema — Engineer
+- customer pack content — physicist + Engineer
+- RAG plugin contract — Engineer + search expert
 - Chunking strategy — search expert
-- Statistical methodology — Katarina
+- Statistical methodology — Engineer
 
 ### 9.3 Sequenced prompts
 Per FRD Section 9. Corpus ingestion implemented before extraction pipeline.
@@ -312,7 +310,7 @@ Per FRD Section 9. Corpus ingestion implemented before extraction pipeline.
 - No bundled corpus data in any public repo
 - Rights declaration required on every document upload
 - Core engine + Veritas RAG: MIT licence, zero domain logic
-- Cill AB pack: private, Cill AB IP
+- customer pack: private, customer IP
 - All findings reference `pack_id` + `pack_version`
 - Veritas RAG: grounded answers, must cite, must refuse when evidence weak
 - Primary language: C# — Python only for statistical analysis
@@ -327,7 +325,7 @@ Per FRD Section 9. Corpus ingestion implemented before extraction pipeline.
 | Users upload copyrighted material | Medium | Medium | Rights declaration logged; platform not responsible |
 | Content Understanding accuracy on user docs | Medium | High | Human validation workflow |
 | Publication bias in analysis | High | Medium | Explicit bias flagging |
-| Pekka unavailable for ontology session | Medium | High | Blocks Phase 2 — schedule immediately |
+| physicist unavailable for ontology session | Medium | High | Blocks Phase 2 — schedule immediately |
 | KTH not interested in hosting | Medium | Low | Other institutions can host |
 | Copilot conflicts on shared surfaces | Medium | Medium | Sequenced prompts per FRD |
 
@@ -337,10 +335,10 @@ Per FRD Section 9. Corpus ingestion implemented before extraction pipeline.
 
 | Dependency | Owner | Blocks |
 |-----------|-------|--------|
-| gh-maf-template fork | Katarina | Everything |
-| Domain Pack schema v1.0 | Katarina | Phase 2 |
-| RAG plugin contract | Katarina + search expert | Phase 1 |
-| Ontology session with Pekka | Katarina + Pekka | Phase 2 |
+| gh-maf-template fork | Engineer | Everything |
+| Domain Pack schema v1.0 | Engineer | Phase 2 |
+| RAG plugin contract | Engineer + search expert | Phase 1 |
+| Ontology session with physicist | Engineer + physicist | Phase 2 |
 | Search expert: index + RAG design | Colleague | Phase 1 |
 | Azure subscription | Intentive Labs | Phase 1 |
 

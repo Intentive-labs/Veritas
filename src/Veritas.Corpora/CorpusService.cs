@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using Microsoft.Extensions.Logging;
 using Veritas.Core.Contracts;
 using Veritas.Core.Models;
 
@@ -9,7 +10,7 @@ namespace Veritas.Corpora;
 // or Azure SQL Database. Cosmos DB suits well due to schema flexibility and per-partition
 // access control by corpus_id.
 // Configure: IConfiguration["CosmosDb:ConnectionString"], database "veritas", container "corpora".
-public class CorpusService
+public class CorpusService(ILogger<CorpusService> logger)
 {
     // [MOCK] In-memory store. Replace with injected ICorpusRepository.
     private readonly Dictionary<string, Corpus> _corpora = new();
@@ -29,6 +30,7 @@ public class CorpusService
             UpdatedAt = DateTime.UtcNow
         };
         _corpora[slug] = corpus;
+        logger.LogInformation("Corpus created: {CorpusId} owner={Owner}", slug, owner);
         return Task.FromResult(corpus);
     }
 
@@ -44,7 +46,11 @@ public class CorpusService
         => Task.FromResult(_corpora.TryGetValue(corpusId, out var c) ? c : null);
 
     public Task<bool> DeleteAsync(string corpusId, CancellationToken ct = default)
-        => Task.FromResult(_corpora.Remove(corpusId));
+    {
+        var removed = _corpora.Remove(corpusId);
+        if (removed) logger.LogInformation("Corpus deleted: {CorpusId}", corpusId);
+        return Task.FromResult(removed);
+    }
 
     public Task UpdateIndexStatusAsync(
         string corpusId, IndexStatus status, CancellationToken ct = default)
@@ -53,6 +59,7 @@ public class CorpusService
         {
             corpus.IndexStatus = status;
             corpus.UpdatedAt = DateTime.UtcNow;
+            logger.LogInformation("Corpus {CorpusId} index_status → {Status}", corpusId, status);
         }
         return Task.CompletedTask;
     }

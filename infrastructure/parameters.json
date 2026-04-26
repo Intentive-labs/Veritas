@@ -1,0 +1,35 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environment": {
+      "value": "dev"
+    },
+    "location": {
+      "value": "swedencentral"
+    },
+    "prefix": {
+      "value": "veritas"
+    },
+    "aadTenantId": {
+      "value": "__FILL_IN__",
+      "_comment": "[MOCK] Replace with your Azure AD tenant ID (found in Entra ID → Overview)"
+    },
+    "aadClientId": {
+      "value": "__FILL_IN__",
+      "_comment": "[MOCK] Replace with the client ID of the Veritas.Api app registration in Entra ID"
+    },
+    "openAiChatDeployment": {
+      "value": "gpt-4o",
+      "_comment": "[MOCK] Must match the deployment name created in Azure OpenAI Studio"
+    },
+    "openAiEmbeddingDeployment": {
+      "value": "text-embedding-3-large",
+      "_comment": "[MOCK] Confirm embedding model with search expert before deploying"
+    },
+    "appServiceSku": {
+      "value": "B1",
+      "_comment": "[MOCK] Use P1v3 for production workloads"
+    }
+  }
+}

@@ -1,0 +1,74 @@
+name: Extraction Pipeline
+
+on:
+  workflow_dispatch:
+    inputs:
+      corpus_id:
+        description: "Corpus ID to process"
+        required: true
+        type: string
+      pack_id:
+        description: "Domain pack ID to apply"
+        required: true
+        default: "lenr-magnetic-field"
+        type: string
+      document_id:
+        description: "Single document ID to process (leave empty to process all pending)"
+        required: false
+        type: string
+
+  # Trigger on document upload events via repository_dispatch
+  repository_dispatch:
+    types: [document-uploaded]
+
+env:
+  DOTNET_VERSION: "10.0.x"
+
+jobs:
+  run-extraction:
+    name: Run extraction pipeline
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore
+        run: dotnet restore gh-maf-template.sln
+
+      - name: Build
+        run: dotnet build gh-maf-template.sln --no-restore --configuration Release
+
+      # [MOCK] Replace this step with a real CLI tool or API call that triggers the
+      # ExtractionQueue in Veritas.Extraction. Until the extraction CLI is built,
+      # this calls the API endpoint directly.
+      # Real implementation: dotnet run --project src/Veritas.Extraction.Cli -- \
+      #   --corpus $CORPUS_ID --pack $PACK_ID [--document $DOCUMENT_ID]
+      - name: Trigger extraction via API
+        env:
+          VERITAS_API_URL: ${{ secrets.VERITAS_API_URL }}   # [MOCK] set in repo secrets
+          VERITAS_API_KEY: ${{ secrets.VERITAS_API_KEY }}   # [MOCK] set in repo secrets
+        run: |
+          CORPUS="${{ github.event.inputs.corpus_id || github.event.client_payload.corpus_id }}"
+          PACK="${{ github.event.inputs.pack_id || github.event.client_payload.pack_id }}"
+          DOC="${{ github.event.inputs.document_id || github.event.client_payload.document_id }}"
+          
+          echo "Triggering extraction for corpus=$CORPUS pack=$PACK document=${DOC:-all-pending}"
+          
+          # [MOCK] Uncomment when VERITAS_API_URL is configured in repository secrets
+          # curl -s -X POST "$VERITAS_API_URL/api/corpora/$CORPUS/extract" \
+          #   -H "Authorization: Bearer $VERITAS_API_KEY" \
+          #   -H "Content-Type: application/json" \
+          #   -d "{\"pack_id\": \"$PACK\", \"document_id\": \"$DOC\"}" \
+          #   --fail-with-body
+          echo "[MOCK] Extraction trigger skipped — VERITAS_API_URL not configured"
+
+      - name: Report status
+        if: always()
+        run: |
+          echo "Extraction pipeline job completed: ${{ job.status }}"

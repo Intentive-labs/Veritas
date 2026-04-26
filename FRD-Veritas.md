@@ -3,7 +3,7 @@
 **Version:** 1.4  
 **Date:** April 2026  
 **Owner:** Intentive Labs AB  
-**Customer:** Cill AB  
+**Customer:** customer  
 **Status:** Draft – Copilot Agent Mode Ready
 
 ---
@@ -34,7 +34,7 @@ Veritas.Storage       ← Azure Data Lake abstraction
 Veritas.Api           ← ASP.NET Core REST API
 Veritas.Rag           ← Generic RAG core (in veritas-rag repo)
 Lenr.Rag              ← LENR corpus connector (in veritas-rag repo)
-DomainPacks.LenrMagneticField ← Cill AB pack (in cill-ab/lenr-pack repo)
+DomainPacks.LenrMagneticField ← customer pack (in customer/lenr-pack repo)
 ```
 
 ### 1.3 Repository Structure
@@ -42,7 +42,7 @@ DomainPacks.LenrMagneticField ← Cill AB pack (in cill-ab/lenr-pack repo)
 ```
 intentive-labs/veritas          ← Core engine (public, MIT)
 intentive-labs/veritas-rag      ← RAG service (public, MIT, hostable)
-cill-ab/lenr-pack               ← Cill AB domain pack (private)
+customer/lenr-pack               ← customer domain pack (private)
 ```
 
 ### 1.4 Component Map
@@ -108,7 +108,7 @@ Raw through validated zones are immutable once written. Pack-specific zones keye
 
 ### 2.1 Repository Setup
 
-**FR-0.1** Create `intentive-labs/veritas` (public) by forking gh-maf-template. Create `intentive-labs/veritas-rag` (public). Create `cill-ab/lenr-pack` (private).
+**FR-0.1** Create `intentive-labs/veritas` (public) by forking gh-maf-template. Create `intentive-labs/veritas-rag` (public). Create `customer/lenr-pack` (private).
 
 **FR-0.2** Both public repos pass gh-maf-template CI before new code is added.
 
@@ -144,7 +144,7 @@ veritas-rag/
 └── infrastructure/
 ```
 
-`mock-data/` contains sample documents and mock corpora for development and testing. No real LENR documents. No Cill AB data.
+`mock-data/` contains sample documents and mock corpora for development and testing. No real LENR documents. No customer data.
 
 ### 2.2 Domain Pack Schema v1.0
 
@@ -172,7 +172,7 @@ veritas-rag/
 }
 ```
 
-**FR-0.6** Generic LENR example pack in `domain-pack-schema/examples/lenr-pack-example/` — placeholder values only. No Cill AB data.
+**FR-0.6** Generic LENR example pack in `domain-pack-schema/examples/lenr-pack-example/` — placeholder values only. No customer data.
 
 ### 2.3 Veritas.DomainPacks Runtime (C#)
 
@@ -221,11 +221,11 @@ public interface IDomainPackRuntime
 - Grounded answer requirements, citation format
 - Refusal behaviour when evidence weak
 
-**FR-0.12** Cill AB pack skills in `cill-ab/lenr-pack/.github/skills/` — authored during Pekka ontology session:
-- `lenr-parameter-ontology.skill` **[PEKKA REQUIRED]**
-- `lenr-outcome-classification.skill` **[PEKKA REQUIRED]**
-- `lenr-validation-rules.skill` **[PEKKA REQUIRED]**
-- `lenr-experiment-schema.skill` **[PEKKA REQUIRED]**
+**FR-0.12** customer pack skills in `customer/lenr-pack/.github/skills/` — authored during physicist ontology session:
+- `lenr-parameter-ontology.skill` **[physicist REQUIRED]**
+- `lenr-outcome-classification.skill` **[physicist REQUIRED]**
+- `lenr-validation-rules.skill` **[physicist REQUIRED]**
+- `lenr-experiment-schema.skill` **[physicist REQUIRED]**
 
 ---
 
@@ -594,7 +594,7 @@ awaiting_human_review → validated → failed
 
 **FR-NFR-8** No user document content transmitted outside Azure OpenAI under Intentive Labs enterprise agreement.
 
-**FR-NFR-9** Cill AB pack not cached or logged by core engine or RAG.
+**FR-NFR-9** customer pack not cached or logged by core engine or RAG.
 
 **FR-NFR-10** Agent pipeline steps logged with: start time, duration, status, error, `corpus_id`, `pack_id`, `pack_version`.
 
@@ -760,7 +760,7 @@ intentive-labs/veritas-rag (public, MIT)
 └── infrastructure/
 
 ─────────────────────────────────────────────────────────────────
-cill-ab/lenr-pack (private)
+customer/lenr-pack (private)
 │
 ├── manifest.json
 ├── ontology.json
@@ -826,7 +826,7 @@ cill-ab/lenr-pack (private)
 | 24 | React Corpus Manager + Document Upload UI | veritas | Step 23 | — |
 | 25 | React Search UI (queries veritas-rag) | veritas | Step 22 | — |
 | 26 | `HOSTING.md` | veritas-rag | Step 22 | FR-1.34 |
-| 27 | **[PEKKA SESSION]** Author 4 Cill AB pack skills | lenr-pack | Steps 3–6 | FR-0.12 |
+| 27 | **[physicist SESSION]** Author 4 customer pack skills | lenr-pack | Steps 3–6 | FR-0.12 |
 | 28 | `ExtractionAgent.cs` + `extraction.md` | veritas | Steps 9, 10 | FR-2.4 |
 | 29 | `ValidationAgent.cs` + `validation.md` | veritas | Step 28 | FR-2.4 |
 | 30 | `NormalizationAgent.cs` + `normalization.md` | veritas | Step 28 | FR-2.4 |
@@ -855,8 +855,8 @@ cill-ab/lenr-pack (private)
 - [ ] `Veritas.Rag` contracts defined
 - [ ] All core skills authored
 - [ ] `rag-plugin-contract.skill` authored
-- [ ] Pekka ontology session completed
-- [ ] Cill AB pack skills authored
+- [ ] physicist ontology session completed
+- [ ] customer pack skills authored
 
 ### Phase 1
 - [ ] A private user-provided corpus can be created, populated with documents, indexed, queried and reprocessed with full provenance
@@ -870,13 +870,13 @@ cill-ab/lenr-pack (private)
 
 ### Phase 2
 - [ ] Extraction pipeline processes documents through all four agents
-- [ ] Pack runtime correctly loads Cill AB pack
+- [ ] Pack runtime correctly loads customer pack
 - [ ] Classifications stored in correct corpus-scoped zone
 - [ ] Human validation interface functional
 - [ ] Multi-pack comparison endpoint functional
 
 ### Phase 3
-- [ ] Experiment submission validates against Cill AB pack schema
+- [ ] Experiment submission validates against customer pack schema
 - [ ] `hypothesis_version` references declared hypothesis in pack
 - [ ] Experiment comparison returns similar corpus documents
 

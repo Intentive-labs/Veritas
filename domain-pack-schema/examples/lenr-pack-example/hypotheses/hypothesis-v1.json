@@ -1,20 +1,20 @@
 {
   "hypothesis_id": "lenr-example-h1",
   "version": "0.1.0",
-  "title": "PLACEHOLDER: Replace with actual hypothesis title (Pekka session required)",
-  "description": "PLACEHOLDER: Replace with full hypothesis statement after Pekka ontology session. This will reference the controlling variable identified in Cill AB patent.",
+  "title": "PLACEHOLDER: Replace with actual hypothesis title (physicist session required)",
+  "description": "PLACEHOLDER: Replace with full hypothesis statement after physicist ontology session. This will reference the controlling variable identified in customer patent.",
   "variables": [
     {
       "name": "placeholder_independent",
       "role": "independent",
-      "description": "PLACEHOLDER: Replace with independent variable (Pekka session required)"
+      "description": "PLACEHOLDER: Replace with independent variable (physicist session required)"
     },
     {
       "name": "placeholder_dependent",
       "role": "dependent",
-      "description": "PLACEHOLDER: Replace with dependent variable (Pekka session required)"
+      "description": "PLACEHOLDER: Replace with dependent variable (physicist session required)"
     }
   ],
-  "expected_direction": "PLACEHOLDER: positive | negative | non-linear (Pekka session required)",
+  "expected_direction": "PLACEHOLDER: positive | negative | non-linear (physicist session required)",
   "confidence_threshold": 0.7
 }

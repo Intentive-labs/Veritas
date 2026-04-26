@@ -1,146 +1,134 @@
-## gh-maf-template
+## Veritas
 
-A structured engineering system for building agentic products—focused on control, evaluation, and observability, not just agent logic.
-
-It helps teams move from prompt-driven experiments to systems that can be tested, constrained, and improved over time.
-
----
-
-## What it provides
-
-### Behavior layer
-Define agents, workflows, and scenarios.
-
-### Capability & control layer
-Expose tools safely with contracts, policies, and context-based filtering.
-
-### Evaluation layer
-Test behavior using datasets and scenario-based checks.
-
-### Observability layer
-Trace decisions, tool usage, and failures to understand what happened.
-
-### Governance layer
-Repo instructions and workflows that standardize how changes are made.
+A private corpus intelligence platform for scientific document analysis.
+Built for researchers who need to query, extract, and cross-validate structured evidence
+from a closed corpus — with grounded answers, full citations, and no hallucination outside
+the registered document set.
 
 ---
 
-## Why it matters
+## What it does
 
-Agentic systems are not deterministic.  
-Without structure, they become hard to trust, test, and operate.
-
-This template adds the missing pieces:
-
-- controlled capabilities instead of open-ended tools  
-- measurable behavior instead of demos  
-- traceable execution instead of guesswork  
+- **Ingest** scientific documents (PDF/text) into a versioned corpus
+- **Extract** structured parameters and experimental results using a domain pack–driven agent pipeline
+- **Validate** extractions against pack ontology with field-level coverage reports
+- **Query** the corpus with RAG — answers are grounded in the indexed documents and refused when evidence is insufficient
+- **Compare** extraction outcomes across multiple domain packs to surface agreement, conflict, and gaps
+- **Analyse** multi-pack results with statistical notebooks (correlation, hypothesis testing, publication bias)
 
 ---
 
-## What this is not
+## Repository layout
 
-- Not just an agent sample  
-- Not just a prompt or tool wrapper  
-- Not just a framework  
+### Backend (`src/`)
+| Project | Role |
+|---|---|
+| `Veritas.Core` | Shared models and contracts |
+| `Veritas.Storage` | Document store interface + Data Lake path builder |
+| `Veritas.Corpora` | Corpus CRUD, document ingestion, text extraction, indexing |
+| `Veritas.DomainPacks` | Pack loader, validator, runtime |
+| `Veritas.Extraction` | 5-agent extraction pipeline + ContractCoverageValidator |
+| `Veritas.Rag` | RAG pipeline: retriever, answer generator, citation validator |
+| `Veritas.Api` | REST API — 7 controllers, JWT auth stub, Scalar UI |
 
-It’s the system around the agent that makes it possible to ship.
-## Solution layout
-- `src/Template.Host`: concurrent workflow sample (two translator agents) and artifact generation.
-- `src/Template.Agents`: agent contracts and worker role examples.
-- `src/Template.Tools`: safe tool execution pipeline, structured tool contracts, and context-based policy filtering.
-- `src/Template.Mcp`: MCP adapters and multi-server catalog integration with graceful failure reporting.
-- `src/Template.Observability`: runtime telemetry observers and OpenTelemetry provider bootstrap.
-- `src/Template.Evaluation`: scenario evaluator, JSONL dataset loading, safety/reliability scoring, and machine-readable report output.
-- `tests/Template.UnitTests`: deterministic safety and reliability unit tests.
-- `tests/Template.IntegrationTests`: MCP-focused integration tests.
+### Frontend (`src/Veritas.Web/`)
+React + TypeScript + Tailwind v4, built with Vite.
+
+| Page | Route |
+|---|---|
+| Corpora | `/corpora` |
+| Corpus detail | `/corpora/:id` |
+| Document detail | `/corpora/:id/documents/:docId` |
+| Validation queue | `/validation` |
+| RAG Search | `/search` |
+| Experiments | `/experiments` |
+| Hypothesis | `/hypothesis` |
+| Pack compare | `/corpora/:id/compare` |
+| Analysis | `/analysis` |
+
+### Domain packs (`domain-pack-schema/`)
+- `schema-v1/` — JSON schemas for pack structure
+- `examples/lenr-pack-example/` — LENR example pack (`[MOCK]` placeholders, physicist session required)
+
+### Analysis (`analysis/`)
+Jupyter notebooks (Python):
+- `01_parameter_analysis.ipynb` — distributions + histograms
+- `02_hypothesis_testing.ipynb` — support/contradict/inconclusive + chi-square
+- `03_correlation_analysis.ipynb` — Pearson matrix + scatter plots
+- `04_publication_bias.ipynb` — funnel plot + Egger's test
+- `requirements.txt`
+
+### Infrastructure (`infrastructure/`)
+Azure Bicep — 9 resources (Cosmos DB, Azure AI Search, Data Lake, OpenAI, Key Vault, App Service, managed identity, RBAC).
+
+---
+
+## Quick start
+
+**API:**
+```powershell
+dotnet restore
+dotnet build gh-maf-template.sln
+dotnet run --project src/Veritas.Api/Veritas.Api.csproj
+# Scalar API UI: https://localhost:5001/scalar/v1
+```
+
+**Web UI:**
+```powershell
+cd src/Veritas.Web
+npm install
+npm run dev
+# http://localhost:5173
+```
+
+**Analysis notebooks:**
+```powershell
+cd analysis
+pip install -r requirements.txt
+jupyter lab
+```
+
+**Infrastructure (deploy to Azure):**
+```powershell
+az deployment group create `
+  --resource-group <rg> `
+  --template-file infrastructure/main.bicep `
+  --parameters @infrastructure/parameters.json
+```
+See `HOSTING.md` for full deployment instructions.
+
+---
 
 ## GitHub guidance layout
-- `.github/copilot-instructions.md`: repo-wide Copilot operating rules.
-- `.github/instructions/*`: path-specific coding, testing, docs, and security constraints.
-- `.github/agents/`: development-time Copilot instruction files for the Planner, Implementer, Reviewer and Verifier agents.
-- `.github/skills/*`: reusable workflow playbooks for recurring engineering tasks.
-- `.github/workflows/*`: CI, template checks, PR checks, and evaluation workflows.
-- `.github/pull_request_template.md`: PR validation checklist.
+- `.github/copilot-instructions.md` — repo-wide Copilot operating rules
+- `.github/instructions/*` — path-specific coding, testing, docs, and security constraints
+- `.github/agents/` — Planner, Implementer, Reviewer, Verifier instruction files
+- `.github/skills/` — `corpus-ingestion-rules`, `content-understanding-schema`, `normalization-rules`, `domain-pack-schema`, `rag-plugin-contract`
+- `.github/workflows/` — CI, PR checks, evals, extraction pipeline trigger
 
-## Starter skills
-- `.github/skills/agent-framework-change-workflow/SKILL.md`
-- `.github/skills/evaluation-workflow/SKILL.md`
-- `.github/skills/safe-runtime-modification/SKILL.md`
-- `.github/skills/development-agent-workflow/SKILL.md`: orchestrates the four development-time agents for structured change execution.
+---
 
-Skills define repeatable execution flow; instructions remain the mandatory policy layer.
+## Key design decisions
 
-## Prompting style for developers
-- Preferred: ask for outcomes in plain English.
-- Optional advanced mode: explicitly reference workflow IDs in `.github/skills/*`.
+- **All answers are corpus-scoped** — the RAG pipeline refuses queries when no relevant chunks are found rather than generating unsupported answers.
+- **Domain packs are versioned** — every extraction output is tagged with `pack_id` + `pack_version` so results are reproducible as packs evolve.
+- **Pipeline is resumable** — intermediate state is written to storage after each step; a failed job can be retried from any point.
+- **`[MOCK]` discipline** — every Azure service stub is annotated with the NuGet package, config key, and exact replacement needed. No silent stubs.
 
-Good prompt examples:
-- "Add an agent that can use MCP server X to answer user questions, with tests and docs updates."
-- "Add an evaluation scenario for this failure mode and run build/test/host validation."
-- "Update parser behavior while preserving safety boundaries and existing executor checks."
+---
+
+## Current status
+
+All service stubs are marked `[MOCK]`. The system compiles and runs locally with in-memory storage.
+Real Azure connections (Data Lake, Cosmos DB, Azure AI Search, OpenAI) require configuration.
+See `REVIEW.md` for a full implementation assessment and priority list for next steps.
+
+---
 
 ## Architecture docs
 - `docs/architecture/system-overview.md`
-- `docs/architecture/coding-standards.md`
 - `docs/architecture/decision-log.md`
-- `docs/architecture/ai-engineering-guidelines.md`
-
-## Quick start
-```powershell
-dotnet restore
-dotnet build -c Release
-dotnet run --project src/Template.Host/Template.Host.csproj
-dotnet test -c Release
-```
-
-## Helper scripts
-- `scripts/build.ps1`
-- `scripts/test.ps1`
-- `scripts/evals.ps1`
-- `scripts/bootstrap-rename.ps1`
-
-## Bootstrap renaming for new projects
-Run the rename bootstrap immediately after creating a new repository from this template:
-```powershell
-./scripts/bootstrap-rename.ps1 -ProjectName Contoso.Agent
-dotnet restore Contoso.Agent.sln
-dotnet build Contoso.Agent.sln
-```
-
-This updates project names, namespaces, folder names, solution references, and docs/workflow references from `Template.*` to your chosen project identity.
-
-## Concurrent workflow sample
-The host sample follows the official Agent Framework concurrent orchestration pattern:
-- two translator agents (French and Spanish)
-- one concurrent workflow built by `AgentWorkflowBuilder.BuildConcurrent(...)`
-- streaming events plus aggregated final output
-- for each language, a parsed MCP-style `/tool ...` lookup executes through `ToolCommandParser` and `SafeToolExecutor` during execution
-- lookup results seed each agent's translator identity (hardcoded mock values in template; real systems should use MCP servers)
-- tool access is filtered by runtime context (mode/intent/risk) before selection
-- `Template.Agents` worker implementations (`PlanningWorker`, `SafetyWorker`, `GeneralWorker`) build workflow guidance that is injected into the live translator workflow path.
-- Standalone translator agents live under `src/Template.Agents/Agents/<AgentName>/` with a C# agent class and co-located `.instructions.md` file. Host loads these specs from `StandaloneTranslationAgentRegistry`.
-
-## Runtime mode
-- Cloud mode: set `AZURE_OPENAI_ENDPOINT` (and optionally `AZURE_OPENAI_DEPLOYMENT_NAME`) to run the live concurrent workflow.
-- Local fallback mode: if no endpoint is set, host produces deterministic sample output so CI and local runs still succeed.
-
-## OpenTelemetry visibility
-- Host runtime bootstraps OpenTelemetry via `Template.Observability.OpenTelemetryRuntime.CreateDefault("Template.Host")`.
-- Console exporter is enabled by default; view emitted spans/metrics directly in terminal output while running the host.
-- Set `OTEL_CONSOLE_EXPORTER_ENABLED=false` to suppress console telemetry.
-- `artifacts/evaluation-report.json` also records an `Observability` summary section for runtime verification.
-
-## Evaluation artifacts
-Host execution writes two artifacts:
-- `artifacts/evaluation-report.json`: deterministic summary used by CI threshold checks.
-- `artifacts/evaluation-library-report.json`: scenario-run report emitted via `Microsoft.Extensions.AI.Evaluation.Reporting`.
-
-Dataset scenarios live under `evaluation-datasets/` as JSONL and include `Normal`, `Edge`, and `Adversarial` categories.
-`Template.Scenarios/Scenarios/TranslateText/TranslateTextScenarioRunner` is the default runtime scenario entrypoint and composes `EvaluationDatasetLoader` with `AgentScenarioEvaluator`.
-
-## Template extension points
-- Add new worker roles in `src/Template.Agents`.
-- Add local or remote tools in `src/Template.Tools` and register them in the host.
-- Add MCP servers by implementing `IMcpServerClient` or wiring a real client.
-- Add runtime scenarios in `src/Template.Scenarios/Scenarios/<ScenarioName>/` and keep scoring/report logic in `src/Template.Evaluation`.
+- `REVIEW.md` — critical implementation assessment
+- `HOSTING.md` — local dev, Docker, App Service deployment
+- `SETUP.md` — developer environment setup
+- `USAGE.md` — API and UI usage guide

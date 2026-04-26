@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Domain Pack Manifest",
+  "type": "object",
+  "required": ["pack_id", "version", "name", "field", "owner", "status", "assumptions", "ignores", "source", "schema_version"],
+  "additionalProperties": false,
+  "properties": {
+    "pack_id":        { "type": "string", "pattern": "^[a-z0-9-]+$", "description": "Immutable kebab-case identifier" },
+    "version":        { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$", "description": "Semver — classification changes require major bump" },
+    "name":           { "type": "string" },
+    "field":          { "type": "string", "description": "Scientific domain (e.g. condensed-matter-physics)" },
+    "owner":          { "type": "string" },
+    "status":         { "enum": ["official", "experimental", "community"] },
+    "assumptions":    { "type": "array", "minItems": 1, "items": { "type": "string" } },
+    "ignores":        { "type": "array", "minItems": 1, "items": { "type": "string" }, "description": "Factors explicitly outside pack scope" },
+    "source":         { "type": "string", "description": "Citation or reference for the pack rationale" },
+    "schema_version": { "type": "string", "description": "Domain pack schema version this pack targets (e.g. 1.0)" }
+  }
+}

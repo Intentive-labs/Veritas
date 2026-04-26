@@ -1,0 +1,24 @@
+{
+  "outcome_classes": [
+    {
+      "name": "placeholder_positive",
+      "description": "PLACEHOLDER: Replace with actual positive outcome definition (Pekka session required)"
+    },
+    {
+      "name": "placeholder_negative",
+      "description": "PLACEHOLDER: Replace with actual negative outcome definition (Pekka session required)"
+    },
+    {
+      "name": "inconclusive",
+      "description": "Insufficient data to classify"
+    }
+  ],
+  "rules": [
+    {
+      "field": "placeholder_parameter_1",
+      "condition": "PLACEHOLDER: Replace with actual threshold condition (Pekka session required)",
+      "outcome": "placeholder_positive",
+      "confidence_threshold": 0.7
+    }
+  ]
+}

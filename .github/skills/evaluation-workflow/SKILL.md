@@ -1,3 +1,8 @@
+---
+name: evaluation-workflow
+description: Use this skill to change evaluation scenarios, scoring logic, or evaluation artifacts.
+---
+
 # Evaluation Workflow
 
 Use this skill to change evaluation scenarios, scoring logic, or evaluation artifacts.

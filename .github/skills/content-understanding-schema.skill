@@ -1,0 +1,44 @@
+# Azure Content Understanding API Contract
+
+## Base Extraction Schema
+
+Every document extraction returns:
+
+```json
+{
+  "document_id": "string",
+  "title":        { "value": "string",    "confidence": 0.0 },
+  "authors":      { "value": ["string"],  "confidence": 0.0 },
+  "year":         { "value": 2024,        "confidence": 0.0 },
+  "abstract":     { "value": "string",    "confidence": 0.0 },
+  "institutions": { "value": ["string"],  "confidence": 0.0 },
+  "document_type":{ "value": "string",    "confidence": 0.0 },
+  "full_text": "string",
+  "extraction_timestamp": "ISO8601"
+}
+```
+
+## Confidence Interpretation
+
+| Range | Meaning |
+|-------|---------|
+| 0.9 – 1.0 | High confidence — no review needed |
+| 0.6 – 0.89 | Acceptable — may need spot review |
+| < 0.6 | Low confidence — flag `needs_review` |
+
+## Fallback Behaviour
+
+- `title` confidence < 0.6 → use filename as title, set `needs_review = true`
+- `abstract` not found → set to empty string, confidence 0.0
+- `year` not found → set to null
+- `full_text` always extracted regardless of field confidence
+
+## When to use Azure Content Understanding vs direct read
+
+- `.md`, `.txt` → read content directly, skip API
+- `.pdf`, `.docx`, `.html` → call Azure Content Understanding
+
+## Domain-Pack-Aware Extraction (Phase 2)
+
+When a pack is active, pass `pack.Ontology.Parameters` as additional fields to extract.
+Return raw values with confidence — do not interpret or normalise at this step.

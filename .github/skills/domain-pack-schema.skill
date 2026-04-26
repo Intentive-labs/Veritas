@@ -1,0 +1,55 @@
+# Domain Pack Schema
+
+## Pack File Structure
+
+```
+pack-directory/
+├── manifest.json        ← identity, version, owner, status, assumptions, ignores
+├── ontology.json        ← parameter definitions, types, canonical values
+├── classification.json  ← outcome classification rules and thresholds
+├── validation.json      ← physical plausibility rules
+├── normalization.json   ← unit conversions and terminology mappings
+├── hypotheses/
+│   └── hypothesis-v1.json
+└── CHANGELOG.md
+```
+
+All files validated against `domain-pack-schema/schema-v1/*.schema.json` before use.
+
+## How Agents Interact with Pack Files
+
+1. Load and validate `manifest.json` — abort if invalid
+2. Load `ontology.json` — defines the parameter list for extraction
+3. Pass ontology parameter list to ExtractionAgent
+4. Load `validation.json` — apply rules to extracted values
+5. Load `normalization.json` — convert units to canonical form
+6. Load `classification.json` — classify outcomes
+7. Load hypothesis file for hypothesis testing
+
+## Required Output Tagging
+
+**Every agent output MUST include `pack_id` and `pack_version`:**
+
+```json
+{
+  "pack_id": "my-pack",
+  "pack_version": "1.2.0"
+}
+```
+
+Never omit these fields from any extraction, validation, normalization, classification, or hypothesis output.
+
+## Breaking Changes
+
+The following changes require a **major version bump**:
+- Classification rule changes
+- Ontology field removal
+- Adding required ontology fields
+- Threshold changes in classification
+- Changes to `expected_direction` in hypotheses
+
+Old results are preserved when a new version is released — never overwritten.
+
+## Pack ID
+
+`pack_id` is immutable once published. Never changes.

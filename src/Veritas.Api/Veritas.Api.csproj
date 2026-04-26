@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Veritas.Core\Veritas.Core.csproj" />
+    <ProjectReference Include="..\Veritas.Corpora\Veritas.Corpora.csproj" />
+    <ProjectReference Include="..\Veritas.DomainPacks\Veritas.DomainPacks.csproj" />
+    <ProjectReference Include="..\Veritas.Extraction\Veritas.Extraction.csproj" />
+    <ProjectReference Include="..\Veritas.Storage\Veritas.Storage.csproj" />
+    <ProjectReference Include="..\Veritas.Rag\Veritas.Rag.csproj" />
+  </ItemGroup>
+
+</Project>

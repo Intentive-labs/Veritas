@@ -1,0 +1,55 @@
+# Corpus Ingestion Rules
+
+## Supported Document Formats
+
+| Format | Extension | Processing |
+|--------|-----------|-----------|
+| PDF | `.pdf` | Azure Content Understanding |
+| Word | `.docx` | Azure Content Understanding |
+| Markdown | `.md` | Direct text read |
+| Plain text | `.txt` | Direct text read |
+| HTML | `.html` | Tag stripping + Azure Content Understanding |
+
+Unsupported formats → HTTP 415 with list of supported formats.
+
+## Rights Declaration Values
+
+Every document upload requires a rights declaration. This is logged for provenance — not a legal guarantee.
+
+| Value | Meaning |
+|-------|---------|
+| `own_content` | Uploader owns this content |
+| `permission_granted` | Explicit permission from rights holder |
+| `licensed_for_private_use` | Licensed for private/internal use |
+| `public_domain` | Content is in the public domain |
+| `open_access` | Published under open access terms |
+| `unknown_needs_review` | Rights unclear — flagged for review |
+
+## Document ID
+
+- `document_id` is a UUID (`Guid.NewGuid()`) assigned at upload time
+- Unique within corpus — checked before creation
+- Never reused, never client-supplied
+
+## index_status State Machine
+
+```
+pending → indexing → ready | error
+```
+
+- `pending`: corpus created, no index yet
+- `indexing`: index pipeline running
+- `ready`: queries available
+- `error`: indexing failed — error details logged
+
+## Document Processing Status State Machine
+
+```
+uploaded → extracting → indexing → ready | error | needs_review
+```
+
+## Idempotency Rule (FR-1.12)
+
+- SHA256 hash of file content checked before creating a new document record
+- Re-upload of same file (same SHA256) to same corpus → return existing `document_id` with HTTP 200
+- Hash checked per corpus — same file in different corpora gets separate records

@@ -1,0 +1,12 @@
+{
+  "corpus_id": "mock-00000000-0000-0000-0000-000000000001",
+  "name": "Mock LENR Corpus",
+  "slug": "mock-lenr-corpus",
+  "description": "Mock corpus for local development and integration testing. Not real data.",
+  "active_pack_id": "lenr-example",
+  "index_status": "ready",
+  "created_at": "2025-01-01T00:00:00Z",
+  "updated_at": "2025-01-01T00:00:00Z",
+  "document_count": 1,
+  "_mock_note": "[MOCK] This is synthetic test data. Replace with real corpus metadata."
+}

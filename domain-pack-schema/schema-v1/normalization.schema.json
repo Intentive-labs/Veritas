@@ -1,0 +1,34 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Domain Pack Normalization",
+  "type": "object",
+  "required": ["unit_conversions", "terminology_mappings"],
+  "properties": {
+    "unit_conversions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["from_unit", "to_unit", "factor"],
+        "properties": {
+          "from_unit": { "type": "string" },
+          "to_unit":   { "type": "string" },
+          "factor":    { "type": "number" },
+          "offset":    { "type": "number", "description": "Additive offset after multiplication (e.g. Celsius to Kelvin)" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "terminology_mappings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["variant", "canonical"],
+        "properties": {
+          "variant":   { "type": "string" },
+          "canonical": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

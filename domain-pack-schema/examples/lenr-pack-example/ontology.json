@@ -1,0 +1,18 @@
+{
+  "parameters": [
+    {
+      "name": "placeholder_parameter_1",
+      "type": "number",
+      "unit": "unit_unknown",
+      "description": "PLACEHOLDER: Replace with first LENR parameter name, type, unit, description (Pekka session required)",
+      "required": true
+    },
+    {
+      "name": "placeholder_parameter_2",
+      "type": "number",
+      "unit": "unit_unknown",
+      "description": "PLACEHOLDER: Replace with second LENR parameter (Pekka session required)",
+      "required": false
+    }
+  ]
+}

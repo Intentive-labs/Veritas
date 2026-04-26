@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\Veritas.Core\Veritas.Core.csproj" />
+    <ProjectReference Include="..\Veritas.DomainPacks\Veritas.DomainPacks.csproj" />
+    <ProjectReference Include="..\Veritas.Storage\Veritas.Storage.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>

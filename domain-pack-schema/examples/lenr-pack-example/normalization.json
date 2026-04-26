@@ -1,0 +1,16 @@
+{
+  "unit_conversions": [
+    {
+      "from_unit": "PLACEHOLDER_UNIT",
+      "to_unit": "SI_UNIT",
+      "factor": 1.0,
+      "offset": 0.0
+    }
+  ],
+  "terminology_mappings": [
+    {
+      "variant": "PLACEHOLDER_VARIANT_TERM",
+      "canonical": "PLACEHOLDER_CANONICAL_TERM"
+    }
+  ]
+}

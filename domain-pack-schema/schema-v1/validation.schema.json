@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Domain Pack Validation Rules",
+  "type": "object",
+  "required": ["rules"],
+  "properties": {
+    "rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["field", "condition", "severity", "message"],
+        "properties": {
+          "field":     { "type": "string" },
+          "condition": { "type": "string", "description": "Plausibility condition (e.g. 'value > 0')" },
+          "severity":  { "enum": ["error", "warning", "info"] },
+          "message":   { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

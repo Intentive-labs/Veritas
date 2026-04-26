@@ -1,0 +1,52 @@
+# Normalization Rules
+
+## Principle
+
+Normalize to SI base units unless the active pack's `normalization.json` specifies otherwise.
+Never guess units — use `unit_unknown` when unit cannot be determined.
+
+## Common Conversions
+
+| From | To | Formula |
+|------|-----|---------|
+| Gauss (G) | Tesla (T) | T = G / 10000 |
+| Celsius (°C) | Kelvin (K) | K = C + 273.15 |
+| eV | Joules (J) | J = eV × 1.602176634e-19 |
+| kHz | Hz | Hz = kHz × 1000 |
+| MHz | Hz | Hz = MHz × 1e6 |
+| GHz | Hz | Hz = GHz × 1e9 |
+
+Additional conversions from `normalization.json` in the active pack take precedence.
+
+## Range Handling
+
+Ranges expressed as:
+```json
+{ "min": 0.5, "max": 2.0, "unit": "T" }
+```
+
+Single values:
+```json
+{ "value": 1.2, "unit": "T" }
+```
+
+With uncertainty:
+```json
+{ "value": 1.2, "uncertainty": 0.05, "unit": "T" }
+```
+
+## unit_unknown
+
+- Set `unit` to `"unit_unknown"` when unit cannot be determined from context
+- Log all `unit_unknown` occurrences for human review
+- Never guess or infer units
+
+## Traceability
+
+Always preserve `original_value` and `original_unit` alongside the normalized result.
+
+## Terminology Mapping
+
+- Applied after unit normalization
+- Maps synonyms and domain variants to canonical terms
+- Source: `normalization.json` `terminology_mappings` in the active pack

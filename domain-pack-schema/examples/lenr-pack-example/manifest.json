@@ -1,0 +1,18 @@
+{
+  "pack_id": "lenr-example",
+  "version": "0.1.0",
+  "name": "LENR Example Pack (Generic Placeholder)",
+  "field": "condensed-matter-physics",
+  "owner": "intentive-labs",
+  "status": "experimental",
+  "assumptions": [
+    "PLACEHOLDER: Replace with actual physical assumptions after Pekka ontology session",
+    "PLACEHOLDER: e.g. which physical variable is treated as the controlling variable"
+  ],
+  "ignores": [
+    "PLACEHOLDER: Replace with factors explicitly outside pack scope after Pekka session",
+    "PLACEHOLDER: e.g. which variables are not tracked by this pack"
+  ],
+  "source": "PLACEHOLDER: Add citation or reference for pack rationale",
+  "schema_version": "1.0"
+}

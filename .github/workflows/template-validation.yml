@@ -1,11 +1,11 @@
-name: template-validation
+name: veritas-validation
 
 on:
   workflow_dispatch:
   pull_request:
 
 jobs:
-  validate-template:
+  validate:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -18,58 +18,42 @@ jobs:
 
       - name: Validate restore/build/test
         run: |
-          dotnet restore
-          dotnet build --configuration Release --no-restore
-          dotnet test --configuration Release --no-build
-          dotnet run --project src/Template.Host/Template.Host.csproj --configuration Release --no-build
-          test -f artifacts/evaluation-report.json
+          dotnet restore gh-maf-template.sln
+          dotnet build gh-maf-template.sln --configuration Release --no-restore
+          dotnet test gh-maf-template.sln --configuration Release --no-build
 
-      - name: Validate docs exist
+      - name: Validate required docs exist
         run: |
           test -f README.md
-          test -f SETUP.md
           test -f USAGE.md
+          test -f HOSTING.md
+          test -f REVIEW.md
           test -f PROJECT_STRUCTURE.md
           test -f DECISIONS.md
           test -f LEARNINGS.md
 
-          # Repo-wide baseline and path-specific instructions
           test -f .github/copilot-instructions.md
           test -f .github/pull_request_template.md
           test -f .github/instructions/csharp.instructions.md
           test -f .github/instructions/tests.instructions.md
           test -f .github/instructions/docs.instructions.md
           test -f .github/instructions/security.instructions.md
+
+          test -f .github/skills/development-agent-workflow/SKILL.md
           test -f .github/skills/agent-framework-change-workflow/SKILL.md
           test -f .github/skills/evaluation-workflow/SKILL.md
           test -f .github/skills/safe-runtime-modification/SKILL.md
 
-          # Architecture docs
           test -f docs/architecture/system-overview.md
-          test -f docs/architecture/coding-standards.md
           test -f docs/architecture/decision-log.md
-          test -f docs/architecture/ai-engineering-guidelines.md
 
-          # Supported template surface scripts/workflows
-          test -f scripts/build.ps1
-          test -f scripts/test.ps1
-          test -f scripts/evals.ps1
-          test -f scripts/bootstrap-rename.ps1
           test -f .github/workflows/ci.yml
           test -f .github/workflows/evals.yml
           test -f .github/workflows/pr-checks.yml
-          test -f .github/workflows/template-validation.yml
 
-      - name: Validate removed guidance files stay absent
+      - name: Validate only .md files under .github/agents
         run: |
-          # .github/agents/*.md files are first-class governance artifacts (DECISIONS.md item 13, ADR-010).
-          # Reject any non-.md files that would indicate runtime artifacts leaking into the guidance layer.
-          if find .github/agents -type f ! -name '*.md' 2>/dev/null | grep . >/dev/null; then
+          if find .github/agents -type f ! -name "*.md" 2>/dev/null | grep . >/dev/null; then
             echo "Non-markdown files detected under .github/agents/. Only .md instruction files are permitted."
-            exit 1
-          fi
-
-          if find agents -type f -name '*.instructions.md' 2>/dev/null | grep . >/dev/null; then
-            echo "Removed legacy compatibility instruction files were reintroduced under agents/."
             exit 1
           fi

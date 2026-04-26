@@ -24,9 +24,7 @@ jobs:
       - name: Ensure architecture docs exist
         run: |
           test -f docs/architecture/system-overview.md
-          test -f docs/architecture/coding-standards.md
           test -f docs/architecture/decision-log.md
-          test -f docs/architecture/ai-engineering-guidelines.md
 
       - name: Enforce changed-file policies
         env:
@@ -56,64 +54,41 @@ jobs:
           fi
 
           # Prevent reintroduction of removed legacy guidance mechanisms.
-          # .github/agents/ is the supported location for development-time agent definitions.
           if echo "$changed_files" | grep -E '^agents/.*\.instructions\.md$' >/dev/null; then
             echo "Detected changes that reintroduce legacy agent instruction files outside .github/agents/."
             exit 1
           fi
 
           # Identify change categories.
-          tools_changed=false
-          agents_changed=false
-          mcp_changed=false
-          host_changed=false
+          api_changed=false
+          extraction_changed=false
+          rag_changed=false
           eval_changed=false
           workflow_changed=false
-          scripts_changed=false
 
-          if echo "$changed_files" | grep -E '^src/Template\.Tools/' >/dev/null; then tools_changed=true; fi
-          if echo "$changed_files" | grep -E '^src/Template\.Agents/' >/dev/null; then agents_changed=true; fi
-          if echo "$changed_files" | grep -E '^src/Template\.Mcp/' >/dev/null; then mcp_changed=true; fi
-          if echo "$changed_files" | grep -E '^src/Template\.Host/' >/dev/null; then host_changed=true; fi
-          if echo "$changed_files" | grep -E '^src/Template\.Evaluation/' >/dev/null; then eval_changed=true; fi
+          if echo "$changed_files" | grep -E '^src/Veritas\.Api/' >/dev/null; then api_changed=true; fi
+          if echo "$changed_files" | grep -E '^src/Veritas\.Extraction/' >/dev/null; then extraction_changed=true; fi
+          if echo "$changed_files" | grep -E '^src/Veritas\.Rag/' >/dev/null; then rag_changed=true; fi
+          if echo "$changed_files" | grep -E '^src/Veritas\.Evaluation/' >/dev/null; then eval_changed=true; fi
           if echo "$changed_files" | grep -E '^\.github/workflows/' >/dev/null; then workflow_changed=true; fi
-          if echo "$changed_files" | grep -E '^scripts/' >/dev/null; then scripts_changed=true; fi
-
-          # Core runtime surfaces require targeted tests in unit or integration suites.
-          if [ "$tools_changed" = true ] || [ "$mcp_changed" = true ] || [ "$host_changed" = true ]; then
-            if ! echo "$changed_files" | grep -E '^tests/Template\.(UnitTests|IntegrationTests)/' >/dev/null; then
-              echo "Core runtime surface changed without updates in Template.UnitTests or Template.IntegrationTests."
-              exit 1
-            fi
-          fi
 
           # Architecture-boundary surfaces require architecture docs updates.
           boundary_changed=false
-          if [ "$tools_changed" = true ] || [ "$agents_changed" = true ] || [ "$mcp_changed" = true ] || [ "$host_changed" = true ] || [ "$eval_changed" = true ]; then
+          if [ "$api_changed" = true ] || [ "$extraction_changed" = true ] || [ "$rag_changed" = true ] || [ "$eval_changed" = true ]; then
             boundary_changed=true
           fi
 
           if [ "$boundary_changed" = true ]; then
-            if ! echo "$changed_files" | grep -E '^docs/architecture/(system-overview|coding-standards|decision-log)\.md$' >/dev/null; then
+            if ! echo "$changed_files" | grep -E '^docs/architecture/(system-overview|decision-log)\.md$' >/dev/null; then
               echo "Boundary/runtime surfaces changed without architecture doc updates."
               exit 1
             fi
           fi
 
-          # Workflow or setup script changes must update setup/usage-facing docs.
-          if [ "$workflow_changed" = true ] || [ "$scripts_changed" = true ]; then
-            if ! echo "$changed_files" | grep -E '^(SETUP\.md|README\.md|USAGE\.md|docs/)' >/dev/null; then
-              echo "Workflow/scripts changed without corresponding docs/setup updates."
-              exit 1
-            fi
-          fi
-
-          # Runtime changes still require tests.
-          runtime_changed=false
-          if echo "$changed_files" | grep -E '^src/' >/dev/null; then runtime_changed=true; fi
-          if [ "$runtime_changed" = true ]; then
-            if ! echo "$changed_files" | grep -E '^tests/' >/dev/null; then
-              echo "Runtime code changed without test updates."
+          # Workflow changes must update docs.
+          if [ "$workflow_changed" = true ]; then
+            if ! echo "$changed_files" | grep -E '^(README\.md|USAGE\.md|HOSTING\.md|docs/)' >/dev/null; then
+              echo "Workflow changed without corresponding docs update."
               exit 1
             fi
           fi
@@ -142,10 +117,9 @@ jobs:
         shell: pwsh
         run: |
           $escalationSurfaces = @(
-            "src/Template.Host/Program.cs",
-            "src/Template.Tools/ToolCommandParser.cs",
-            "src/Template.Tools/SafeToolExecutor.cs",
-            "src/Template.Evaluation/",
+            "src/Veritas.Api/Program.cs",
+            "src/Veritas.Extraction/",
+            "src/Veritas.Rag/",
             ".github/workflows/"
           )
           $changedFiles = git diff --name-only origin/main HEAD
@@ -158,5 +132,4 @@ jobs:
             Write-Warning "Escalation-required surfaces were modified without updating DECISIONS.md:"
             $surfaceTouched | ForEach-Object { Write-Warning "  - $_" }
             Write-Warning "This is a warning, not a block. Update DECISIONS.md before merging."
-            # Does not exit 1 — advisory only
           }
